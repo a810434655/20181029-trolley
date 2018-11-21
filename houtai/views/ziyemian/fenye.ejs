@@ -1,0 +1,21 @@
+<nav style="text-align: right">
+    <ul class="pagination">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li>
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <%for(var i=0;i<yeshu;i++){%>
+                <li><a href="/index?yema=<%=i%>&tiaojian=<%=tiaojian%>"><%=i+1%></a></li>
+                <%}%>
+                <li>
+                    <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </ul>
+</nav>

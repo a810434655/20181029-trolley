@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script src="js/template-web.js" type="text/javascript" charset="utf-8"></script>
+
+	</head>
+	<style type="text/css">
+		.thumbnail {
+			padding: 20px;
+		}
+		
+		.thumbnail img {
+			height: 100px;
+			width: 100px;
+		}
+		
+		#news {
+			list-style: none;
+		}
+		
+		#news li {
+			float: left;
+		}
+	</style>
+
+	<body>
+		<nav class="navbar navbar-default">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">狗东销售</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+					</ul>
+
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="#">欢迎你,<span class="yonghuming"></span></a>
+						</li>
+						<li>
+							<li>
+								<a href="#">安全退出</a>
+							</li>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
+		</nav>
+
+		<div class="row container" id="news" style="margin: 0 auto;">
+			<script id="list" type="text/html">
+				{{each data as list}}
+				<div class="col-sm-6 col-md-4">
+					<div class="thumbnail">
+						<img src="{{list.tupian}}" class="tupian" alt="...">
+						<div class="caption">
+							<h3 class="biaoti">{{list.title}}</h3>
+							<p>￥<span class="jiage">{{list.jiage}}</span></p>
+							<p><button type="button" class="goumai btn btn-primary" data-id="{{list._id}}">加入购物车</button></p>
+						</div>
+					</div>
+				</div>
+				{{/each}}
+			</script>
+
+		</div>
+
+	</body>
+	<script type="text/javascript">
+		//		开始请求商城数据
+		$(function() {
+			var name = localStorage.getItem("name");
+			if(name != null) {
+				$(".yonghuming").text(name);
+			}
+			$.ajax({
+				url: "http://127.0.0.1:8001/front",
+				type: "get",
+				dataType: "json",
+				success: function(res) {
+					console.log(res);
+					var html = template("list", res);
+					document.getElementById("news").innerHTML = html;
+				},
+				error: function(e) {
+					console.log(e);
+				}
+			})
+		})
+		$(document).on("click", ".goumai", function() {
+			var shangpinid = $(this).attr("data-id");
+			var yonghuid = localStorage.getItem("yonghuid");
+			var info=localStorage.getItem("info");
+			console.log(yonghuid);
+			if(info){
+				$.ajax({
+					type: "get",
+					url: "http://127.0.0.1:8001/front/tianjia",
+					async: true,
+					data: {
+						"shangpinID": shangpinid,
+						"yonghuID": yonghuid
+					},
+					success: function(res) {
+						if(res.start=="200"){
+							console.log("进入");
+							var queding=confirm("加入购物车成功,你是否要跳转到购物车？");
+							if(queding==true){
+								location.href="gouwuche.html";
+							}
+						}else{
+							alert("加入失败");
+						}
+					},
+					error: function(err) {
+						console.log(err);
+					}
+				});
+			}else{
+				alert("失败，没有登录");
+				location.href="login.html";
+			}
+				
+	
+		})
+	</script>
+
+</html>

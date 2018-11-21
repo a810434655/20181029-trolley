@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script src="js/template-web.js" type="text/javascript" charset="utf-8"></script>
+
+	</head>
+	<style type="text/css">
+		.thumbnail {
+			padding: 20px;
+		}
+		
+		.thumbnail img {
+			height: 100px;
+			width: 100px;
+		}
+		
+		.dibu {
+			width: 100%;
+			height: 50px;
+			position: absolute;
+			bottom: 0px;
+			background: #E7E7E7;
+		}
+	</style>
+
+	<body>
+		<nav class="navbar navbar-default">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+					<a class="navbar-brand" href="#">狗东购物车</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+					</ul>
+
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="#">欢迎你,<span class="yonghuming"></span></a>
+						</li>
+						<li>
+							<li>
+								<a href="#">安全退出</a>
+							</li>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
+		</nav>
+		<table class="table">
+			<thead>
+				<tr>
+					<th><input type="checkbox" name="" checked="true" id="" value="" class="quanxuan" /></th>
+					<th>商品名</th>
+					<th>图片</th>
+					<th>价格</th>
+					<th>数量</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody id="news">
+				<script id="list" type="text/html">
+					{{each data as list}}
+					<tr>
+						<td><input type="checkbox" checked="true" name="" id="" data-id="{{list.shangpinID}}" value="" class="xuanze" /></td>
+						<td>{{list.title}}</td>
+						<td><img src="{{list.tupian}}" width="30px" height="30px" alt="" /></td>
+						<td>{{list.jiage}}</td>
+						<td>
+							<button type="button" class="jianshao" data-id="{{list.shangpinID}}">-</button><button disabled="" class="shuliang">{{list.liang}}</button><button type="button" class="tianjia" data-id="{{list.shangpinID}}">+</button>
+						</td>
+						<td><button type="button" data-id="{{list.shangpinID}}" class="delate btn btn-default">删除</button></td>
+					</tr>
+					{{/each}}
+				</script>
+			</tbody>
+		</table>
+		<div class="dibu">
+			<div class="container">
+				<div style="float: right;width: 20%;"><span style="display: block;float: left;font-size: 20px;line-height: 50px;"><i>￥</i><span class="jiage"></span></span><button type="button" class="btn btn-danger jiesuan" style="float: right;width: 30%;height: 50px;">结算</button></div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		//	    for(var i=0;i<=)
+
+		var arr = [];
+		$(function() {
+			var yonghuid = localStorage.getItem("yonghuid");
+			$.ajax({
+				url: "http://127.0.0.1:8001/front/gouwuche",
+				type: "get",
+				data: {
+					"yonghuID": yonghuid
+				},
+				success: function(res) {
+					if(res.data.length > 0) {
+						console.log(res);
+						var html = template("list", res);
+						document.getElementById("news").innerHTML = html;
+						var num = 0;
+						for(var i = 0; i < res.data.length; i++) {
+							var a = parseInt(res.data[i].jiage) * res.data[i].liang;
+							num = num + a;
+						}
+						var wupin = $(".xuanze");
+						for(var j = 0; j < wupin.length; j++) {
+							arr.push($(".xuanze").eq(j).attr("data-id"));
+						}
+						console.log(arr);
+						$(".jiage").text(num);
+					} else {
+						//					alert("你的购物车空空如也");
+					}
+				},
+				error: function(e) {
+					console.log(e);
+				}
+			})
+
+		})
+
+		$(document).on("click", ".xuanze", function() {
+			console.log($(this).is(":checked"));
+			if($(this).is(":checked") == true) {
+				arr.push($(this).attr("data-id"));
+			} else if($(this).is(":checked") == false) {
+				arr.splice(arr.indexOf($(this).attr("data-id"), 1));
+			}
+			console.log(arr);
+		})
+		$(document).on("click", ".delate", function() {
+			var id = $(this).attr("data-id");
+			$.ajax({
+				url: "http://127.0.0.1:8001/front/gouwudelete",
+				type: "get",
+				data: {
+					"shangpinID": id
+				},
+				success: function(res) {
+					console.log(res);
+					if(res.msg == "删除成功") {
+						alert("删除成功");
+						window.location.reload();
+					} else if(res.msg == "失败") {
+						alert("删除失败");
+					}
+				},
+				error: function(e) {
+					console.log(e);
+				}
+			})
+
+		})
+		$(document).on("click", ".jianshao", function() {
+			var id = $(this).attr("data-id");
+			$.ajax({
+				url: "http://127.0.0.1:8001/front/shulianggaibian",
+				type: "get",
+				data: {
+					"shangpinID": id,
+					"jiahuojian": "-"
+				},
+				success: function(res) {
+					if(res.msg == "成功") {
+						alert("成功");
+						window.location.reload();
+					} else {
+						alert("失败");
+					}
+				},
+				error: function(e) {
+					console.log(e);
+				}
+			})
+
+		})
+		$(document).on("click", ".tianjia", function() {
+			var id = $(this).attr("data-id");
+			$.ajax({
+				url: "http://127.0.0.1:8001/front/shulianggaibian",
+				type: "get",
+				data: {
+					"shangpinID": id,
+					"jiahuojian": "+"
+				},
+				success: function(res) {
+					if(res.msg == "成功") {
+						alert("成功");
+						window.location.reload();
+					} else {
+						alert("失败");
+					}
+				},
+				error: function(e) {
+					console.log(e);
+				}
+			})
+
+		})
+		$(document).on("click", ".jiesuan", function() {
+			var b=arr.join("%");
+			console.log(b);
+			if(arr.length != 0) {
+				$.ajax({
+					url: "http://127.0.0.1:8001/front/jiesuan",
+					type: "get",
+					data: {
+						"id": b
+					},
+					success: function(res) {
+						if(res.msg == "成功") {
+							console.log("成功");
+							window.location.reload();
+						} else {
+                          alert("结算失败");
+						}
+					},
+					error: function(e) {
+						console.log(e);
+					}
+				})
+			} else {
+				alert("你没有选中商品或者购物车没有商品");
+			}
+		})
+	</script>
+
+</html>

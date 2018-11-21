@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>前端登录页面</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+	</head>
+
+	<body>
+		<h1 style="text-align: center;margin-top: 5%;font-size: 50px;">狗东商城登录页面</h1>
+		<form action="#">
+			<div class="touxiang">
+				<img src="" class="img" alt="">
+			</div>
+			<p style="position: relative">
+				<span style="position: absolute;color: #333;left: 3%;font-size: 15px;top: 11px;">用户名:</span>
+				<input type="text" id="bir" name="userName">
+			</p>
+			<p style="margin: 27px 0;position: relative;">
+				<span style="position: absolute;color: #333;left: 3%;font-size: 15px;top: 11px;">密 &nbsp;&nbsp;码:</span>
+				<input type="text" id="iki" name="pwd">
+			</p>
+			<p>
+				<input type="button" id="tijiao" disabled value="请输入账号密码再点击我" style="padding: 15px 0 !important;display:inline-block;text-align: center;margin-top: 30px;margin: 10px auto">
+			</p>
+
+			<div class='background'></div>
+		</form>
+		<script src="js/jquery.js"></script>
+		<script src="js/login.js"></script>
+		<script>
+			$("#tijiao").click(function() {
+				var name = $("#bir").val();
+				var pwd = $("#iki").val();
+				$.ajax({
+					type: "get",
+					url: "http://127.0.0.1:8001/login",
+					async: true,
+					data: {
+						userName: name,
+						pwd: pwd
+					},
+					success: function(res) {
+						if(res.msg == "登录成功") {
+							localStorage.setItem("name", name);
+							localStorage.setItem("info", true);
+							localStorage.setItem("yonghuid",res.yonghu);
+							alert("登录成功");
+							window.location.href = "index.html";
+						} else {
+							alert("登录失败，请检查一下你的账号密码");
+							console.log(res);
+						}
+					},
+					error: function(e) {
+						console.log(e);
+					}
+				});
+			})
+			var id;
+			$("#bir").keydown(function() {
+				console.log("进入ajax");
+				clearInterval(id);
+
+			})
+			$("#bir").keyup(function() {
+				var name = $(this).val();
+				clearInterval(id);
+				if(name != "") {
+					id = setInterval(function() {
+						$.ajax({
+							url: "http://127.0.0.1:8001/login/uplode",
+							type: "get",
+							data: {
+								touxiang: name
+							},
+							success: function(res) {
+								console.log(res);
+								$(".img").attr("src", res.touxiang);
+								clearInterval(id);
+							}
+						})
+					}, 1500);
+				}
+			})
+		</script>
+	</body>
+
+</html>

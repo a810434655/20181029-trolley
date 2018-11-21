@@ -1,0 +1,39 @@
+<style>
+    .contaits{
+        width: 100%;
+        min-height: 600px;
+        padding: 0 10px;
+    }
+   ul{
+       list-style: none;
+   }
+   .list{
+       width: 100%;
+       height: auto;
+       box-sizing: border-box;
+       border: 1px solid #e2e2e2;
+   }
+
+    .active a{
+        color: white !important;
+
+    }
+
+   .list li{
+       box-sizing: border-box;
+
+   }
+    .list li a{
+        box-sizing: border-box;
+        color: #5c5f64;
+        border-bottom:1px solid #e2e2e2;
+    }
+</style>
+<div class="contaits">
+    <div class="left-guanli col-lg-2 col-md-2 col-sm-12 col-xs-12">
+        <%- include left-content.ejs%>
+    </div>
+    <div class="youbian col-lg-9 col-md-9 col-sm-12 col-xs-12 ">
+        <%- include right-content.ejs%>
+    </div>
+</div>

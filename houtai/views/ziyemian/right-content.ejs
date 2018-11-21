@@ -1,0 +1,51 @@
+<div class="right-content">
+<div class="lujing">
+    <ol class="breadcrumb">
+        <li>商品管理</li>
+        <%if(liebiao==0){%>
+        <li>商品列表</li>
+        <%}else{%>
+        <li>商品增加</li>
+        <%}%>
+
+
+    </ol>
+</div>
+    <div class="panel panel-default">
+        <div class="panel-heading">搜索</div>
+        <div class="panel-body">
+            <form class="form-inline" action="/index">
+                <div class="form-group">
+                    <span>用户名:</span>
+                    <input type="text" class="form-control" name="tiaojian" id="exampleInputEmail3" placeholder="请输入用户名">
+                </div>
+                <button type="submit" class="btn btn-default">开始搜索</button>
+            </form>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th class="col-lg-2">ID</th>
+            <th class="col-lg-1">图标</th>
+            <th class="col-lg-3">名称</th>
+            <th class="col-lg-1">价格</th>
+            <th class="col-lg-1">邮费</th>
+            <th class="col-lg-3 text-center">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+     <%for(var j=0;j<data.length;j++){%>
+        <tr>
+            <td><%=data[j]._id%></td>
+            <td><img src="<%= data[j].tubiao %>" style="width: 16px;height: 16px;"></td>
+            <td><%= data[j].name %></td>
+            <td><%= data[j].jiage %></td>
+            <td><%= data[j].yunfei %></td>
+            <td class="text-center"><a href="/xiugai?tiaojian=<%=data[j]._id%>">修改</a><a href="/index/delet?tiaojian=<%=data[j]._id%>" style="margin-left: 5px">删除</a></td>
+        </tr>
+       <%}%>
+        </tbody>
+    </table>
+    <%- include fenye.ejs%>
+</div>
